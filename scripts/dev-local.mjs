@@ -1,0 +1,3 @@
+import {readFileSync} from 'node:fs';import {spawn} from 'node:child_process';
+const content=readFileSync(process.env.SUPABASE_TEST_ENV??'../../work/local-supabase.env','utf8');const values=Object.fromEntries(content.split('\n').filter(x=>x.includes('=')).map(x=>{const i=x.indexOf('=');return[x.slice(0,i),x.slice(i+1).replace(/^"|"$/g,'')];}));
+const child=spawn('node',['node_modules/next/dist/bin/next','dev','--port','3001'],{stdio:'inherit',env:{...process.env,NEXT_DIST_DIR:'.next-local',NEXT_PUBLIC_SUPABASE_URL:values.API_URL,NEXT_PUBLIC_SUPABASE_ANON_KEY:values.ANON_KEY}});child.on('exit',c=>process.exit(c??0));process.on('SIGTERM',()=>child.kill('SIGTERM'));process.on('SIGINT',()=>child.kill('SIGINT'));

@@ -1,0 +1,48 @@
+import {test,expect} from '@playwright/test';
+import path from 'node:path';
+const image=path.resolve('public/images/world.jpg');
+test('demo: create world → add screenshots → edit → filter → gallery → places → delete',async({page})=>{
+ await page.goto('/');await expect(page.getByRole('heading',{name:'Your worlds.'})).toBeVisible();
+ await page.getByRole('button',{name:'Create World',exact:true}).click();
+ await page.getByLabel('World name').fill('Playwright Highlands');
+ await page.getByLabel('Description', {exact:true}).fill('Our new survival journal.');
+ await page.getByLabel('Upload world cover').setInputFiles(image);
+ await page.getByRole('button',{name:'Create World',exact:true}).last().click();
+ await expect(page.getByRole('heading',{name:'Playwright Highlands',exact:true})).toBeVisible();
+ await page.getByRole('button',{name:'Add Memory',exact:true}).filter({visible:true}).click();
+ await page.getByLabel('Give it a title').fill('First mountain home');
+ await page.getByLabel('Memory type').selectOption('Build');
+ await page.getByLabel('The story').fill('Built a cabin with a view.');
+ await page.getByLabel('Minecraft day').fill('86');await page.getByLabel('Location name').fill('Mountain home');
+ await page.getByLabel('X',{exact:true}).fill('342');await page.getByLabel('Y',{exact:true}).fill('78');await page.getByLabel('Z',{exact:true}).fill('-186');
+ await page.getByLabel('Upload screenshots').setInputFiles(image);
+ await page.getByRole('button',{name:'Save memory',exact:true}).click();
+ await expect(page.getByRole('heading',{name:'First mountain home',exact:true})).toBeVisible();
+ await page.getByRole('button',{name:'Edit First mountain home',exact:true}).click();
+ await page.getByLabel('Give it a title').fill('Our mountain home');await page.getByRole('button',{name:'Save changes',exact:true}).click();
+ await page.getByLabel('Search memories').fill('nonexistent');await expect(page.getByText('No memories match just yet.')).toBeVisible();
+ await page.getByRole('button',{name:'Clear filters',exact:true}).click();await page.getByLabel('Filter memory type').selectOption('Build');
+ await expect(page.getByRole('heading',{name:'Our mountain home',exact:true})).toBeVisible();
+ await page.getByRole('button',{name:'Gallery 1',exact:true}).click();await page.getByRole('button',{name:'Builds',exact:true}).click();
+ await page.locator('.gallery-item').click();await expect(page.getByRole('dialog')).toBeVisible();await page.keyboard.press('Escape');await expect(page.getByRole('dialog')).toHaveCount(0);
+ await page.getByRole('button',{name:'Places 1',exact:true}).click();await expect(page.getByRole('heading',{name:'Mountain home',exact:true})).toBeVisible();
+ await page.context().grantPermissions(['clipboard-read','clipboard-write']);await page.getByRole('button',{name:'Copy coordinates for Mountain home'}).click();await expect(page.getByText('Copied',{exact:true})).toBeVisible();
+ await page.getByRole('button',{name:'About',exact:true}).click();await page.getByRole('button',{name:'Archive world',exact:true}).click();await expect(page.getByText('● Archived world')).toBeVisible();
+ await page.getByRole('button',{name:'Journal 1',exact:true}).click();await page.getByRole('button',{name:'Delete Our mountain home',exact:true}).click();await page.getByRole('button',{name:'Delete permanently',exact:true}).click();await expect(page.getByText('This is where your story begins.')).toBeVisible();
+ await page.getByRole('button',{name:'About',exact:true}).click();await page.getByRole('button',{name:'Delete world',exact:true}).click();await page.getByRole('button',{name:'Delete permanently',exact:true}).click();await expect(page.getByRole('heading',{name:'Your worlds.'})).toBeVisible();
+});
+for(const width of [375,390,430,768,1440])test(`layout and dialog at ${width}px`,async({page})=>{
+ await page.setViewportSize({width,height:900});await page.goto('/');await expect(page.getByRole('heading',{name:'Your worlds.'})).toBeVisible();
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);
+ await page.getByRole('button',{name:'Open journal',exact:true}).click();await expect(page.getByRole('heading',{name:'Zach’s Survival World',exact:true})).toBeVisible();
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);
+ await page.getByRole('button',{name:'Add Memory',exact:true}).filter({visible:true}).click();await expect(page.getByRole('dialog')).toBeVisible();
+ expect(await page.getByRole('dialog').evaluate(e=>e.scrollWidth<=e.clientWidth)).toBe(true);
+ await page.keyboard.press('Escape');await expect(page.getByRole('dialog')).toHaveCount(0);
+});
+test('lost world, empty filters, invalid files, and incomplete coordinates',async({page})=>{
+ await page.goto('/');await page.getByRole('button',{name:'Open The world we grew up in',exact:true}).click();await expect(page.getByRole('heading',{name:'Preserve a Lost World'})).toBeVisible();
+ await page.getByRole('button',{name:'Add Memory',exact:true}).filter({visible:true}).click();await page.getByLabel('Give it a title').fill('Old memory');
+ await page.getByLabel('Upload screenshots').setInputFiles({name:'unsafe.svg',mimeType:'image/svg+xml',buffer:Buffer.from('<svg/>')});await expect(page.getByText('Choose JPG, PNG, or WebP images.')).toBeVisible();
+ await page.getByLabel('X',{exact:true}).fill('12');await page.getByRole('button',{name:'Save memory',exact:true}).click();await expect(page.getByText('Add all three coordinates, or leave them all empty.')).toBeVisible();
+});
