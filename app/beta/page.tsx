@@ -10,7 +10,7 @@ const steps = [
   {icon: Download, title: 'Install the mod', copy: 'Minecraft Java Edition 1.21.1, Fabric Loader, and Fabric API are needed. Download the JAR from the successful GitHub Actions build.'},
   {icon: Camera, title: 'Capture your moment', copy: 'When an advancement appears, MineVault asks for confirmation. Press J to Save Moment or K to Skip. It never uploads anything on its own.'},
   {icon: FileJson, title: 'Open your captures folder', copy: 'Find the matching .json and .png in .minecraft/minevault/captures/. The event date, Minecraft day, XYZ, online players and perspective are saved locally.'},
-  {icon: Images, title: 'Import into your journal', copy: 'Open a world, select Add Memory, import the JSON metadata, attach the matching PNG, then save. A Supabase-connected vault is required for permanent cloud storage.'},
+  {icon: Images, title: 'Import into your journal', copy: 'Open a world, select Add Memory, select the JSON and matching PNG together (or attach the PNG afterward), then save. A Supabase-connected vault is required for permanent cloud storage.'},
 ];
 
 export default function BetaPage() {
