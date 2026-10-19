@@ -1,0 +1,7 @@
+{
+  "required": true,
+  "package": "app.minevault.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "client": ["AdvancementToastMixin"],
+  "injectors": {"defaultRequire": 1}
+}

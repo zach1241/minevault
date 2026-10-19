@@ -11,7 +11,7 @@ test('demo: create world → add screenshots → edit → filter → gallery →
  await expect(page.getByRole('heading',{name:'Playwright Highlands',exact:true})).toBeVisible();
  await page.getByRole('button',{name:'Add Memory',exact:true}).filter({visible:true}).click();
  await page.getByLabel('Give it a title').fill('First mountain home');
- await page.getByLabel('Memory type').selectOption('Build');
+ await page.getByRole('dialog').locator('select[name="entry_type"]').selectOption('Build');
  await page.getByLabel('The story').fill('Built a cabin with a view.');
  await page.getByLabel('Minecraft day').fill('86');await page.getByLabel('Location name').fill('Mountain home');
  await page.getByLabel('X',{exact:true}).fill('342');await page.getByLabel('Y',{exact:true}).fill('78');await page.getByLabel('Z',{exact:true}).fill('-186');
