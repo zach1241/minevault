@@ -22,8 +22,8 @@ This is a Java Edition 1.21.1 Fabric **local capture beta**, not a finished live
 ## Importing into the web journal
 
 1. Sign in to an instance of MineVault configured with its own Supabase credentials, create/open a world, and click **Add Memory**. The unauthenticated demo lets you test the form but does **not** persist across sessions.
-2. Select **Import MineVault Capture (.json)** and choose the exported metadata file. This fills the title, real-world date, XYZ, Minecraft day, achievement type and story text.
-3. Attach the matching PNG from the mod's captures folder using the image upload control, then click **Save memory**.
+2. Select **Import MineVault Capture** and choose the exported JSON file and its matching PNG together (Ctrl-click both files). This fills the title, date, XYZ, Minecraft day, achievement type and story text, and attaches the PNG if it matches.
+3. If you selected only the JSON, attach its matching PNG separately below. Click **Save memory**.
 4. Review your timeline and screenshot gallery.
 
 ## Safety and privacy
