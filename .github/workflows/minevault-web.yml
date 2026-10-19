@@ -21,3 +21,14 @@ jobs:
       - run: npm run typecheck
       - run: npx playwright test tests/capture-import.spec.ts
       - run: npm run build
+      - name: Install Chromium for browser acceptance tests
+        run: npx playwright install --with-deps chromium
+      - name: Exercise MineVault journal in a real browser
+        run: |
+          npm run start > /tmp/minevault-web.log 2>&1 &
+          for attempt in $(seq 1 40); do
+            if curl -fsS http://localhost:3000/ > /dev/null; then break; fi
+            sleep 2
+          done
+          curl -fsS http://localhost:3000/ > /dev/null || { cat /tmp/minevault-web.log; exit 1; }
+          npx playwright test tests/demo.spec.ts tests/capture-import-ui.spec.ts
