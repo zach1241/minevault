@@ -1,0 +1,23 @@
+name: Verify MineVault web beta
+on:
+  push:
+    branches: [beta/capture-first-v0-1]
+    paths: ['app/**', 'components/**', 'lib/**', 'tests/**', 'package*.json', '.github/workflows/minevault-web.yml']
+  pull_request:
+    paths: ['app/**', 'components/**', 'lib/**', 'tests/**', 'package*.json', '.github/workflows/minevault-web.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  typecheck-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npx playwright test tests/capture-import.spec.ts
+      - run: npm run build
