@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "id": "minevault",
+  "version": "${version}",
+  "name": "MineVault Capture Beta",
+  "description": "Capture Java Edition achievements locally after confirmation.",
+  "authors": ["MineVault"],
+  "environment": "client",
+  "entrypoints": {"client": ["app.minevault.MineVaultClient"]},
+  "mixins": ["minevault.mixins.json"],
+  "depends": {"fabricloader": ">=0.16.0", "minecraft": "~1.21.1", "java": ">=21", "fabric-api": "*"}
+}
