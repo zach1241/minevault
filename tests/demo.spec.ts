@@ -33,11 +33,11 @@ test('demo: create world → add screenshots → edit → filter → gallery →
 });
 for(const width of [375,390,430,768,1440])test(`layout and dialog at ${width}px`,async({page})=>{
  await page.setViewportSize({width,height:900});await page.goto('/');await expect(page.getByRole('heading',{name:'Your worlds.'})).toBeVisible();
- expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);
+ console.log('PAGE_OVERFLOW',width,JSON.stringify(await page.evaluate(()=>({scroll:document.documentElement.scrollWidth,width:innerWidth,offenders:Array.from(document.querySelectorAll('*')).filter(e=>{const r=e.getBoundingClientRect();return r.right>innerWidth+1&&r.width>0&&getComputedStyle(e).display!=='none'}).slice(0,10).map(e=>({tag:e.tagName,cls:e.className?.toString().slice(0,80),text:e.textContent?.slice(0,40),right:Math.ceil(e.getBoundingClientRect().right)}))}))));expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);
  await page.getByRole('button',{name:'Open journal',exact:true}).click();await expect(page.getByRole('heading',{name:'Zach’s Survival World',exact:true})).toBeVisible();
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);
  await page.getByRole('button',{name:'Add Memory',exact:true}).filter({visible:true}).click();await expect(page.getByRole('dialog')).toBeVisible();
- expect(await page.getByRole('dialog').evaluate(e=>e.scrollWidth<=e.clientWidth)).toBe(true);
+ console.log('DIALOG_OVERFLOW',width,JSON.stringify(await page.getByRole('dialog').evaluate(el=>({scroll:el.scrollWidth,client:el.clientWidth,offenders:Array.from(el.querySelectorAll('*')).filter(e=>e.getBoundingClientRect().right>el.getBoundingClientRect().right+1&&e.getBoundingClientRect().width>0).slice(0,10).map(e=>({tag:e.tagName,cls:e.className?.toString().slice(0,80),text:e.textContent?.slice(0,40),right:Math.ceil(e.getBoundingClientRect().right)}))}))));expect(await page.getByRole('dialog').evaluate(e=>e.scrollWidth<=e.clientWidth)).toBe(true);
  await page.keyboard.press('Escape');await expect(page.getByRole('dialog')).toHaveCount(0);
 });
 test('lost world, empty filters, invalid files, and incomplete coordinates',async({page})=>{
